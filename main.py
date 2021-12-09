@@ -45,8 +45,7 @@ def als_recommendation():
     rmse = evaluator.evaluate(predictions) 
     print("Root-mean-square error = " + str(rmse))
     # Generate top 10 movie recommendations for each user
-    userRecs = model.recommendForUserSubset(ratings_df.filter(ratings_df.user_id == 666666), 10).show()
-
+    userRecs = model.recommendForUserSubset(valoraciones_df.filter(valoraciones_df.user_id == 666666), 10).show()
 
 if __name__ == '__main__':
     load_data()
