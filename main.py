@@ -19,11 +19,10 @@ def load_data():
     # Cargamamos los distintos dataframes
     print('\nCargando dataframes...\n')
     global anime_df, ratings_df, valoraciones_df, movie_df, tv_df, union_ratings_valoraciones_df
-    # Crear headers para unir los dataframes ratings con valoraciones_EP
     try:    
+        # Crear headers para unir los dataframes ratings con valoraciones_EP
         union_headers = StructType([StructField('user_id', IntegerType(), True), StructField('anime_id', IntegerType(), True), StructField('rating', FloatType(), True)])
         anime_df = spark.read.option('encoding', 'UTF-8').csv('data/anime.csv', inferSchema=True, header=True, sep=',')
-        # Ponemos en cache este dataframe ya que es muy pesado y asi agilizamos las operaciones realizadas en él
         ratings_df = spark.read.option('encoding', 'UTF-8').csv('data/rating_complete.csv', inferSchema=True, header=True, sep=',')
         valoraciones_df = spark.read.option('encoding', 'UTF-8').csv('data/valoraciones_EP.csv', inferSchema=True, schema=union_headers, header=True, sep=',')
         movie_df, tv_df = anime_df.filter(anime_df.Type == 'Movie'), anime_df.filter(anime_df.Type == 'TV')
@@ -67,6 +66,7 @@ def als_recommendation():
      JOIN sqlRecomendaciones ON sqlSeries.ID = sqlRecomendaciones.anime_id LIMIT 5''')
     
     print("\nPeliculas recomendadas:")
+    ratings_movies_df.write.format("csv").save("/tmp/spark_output/datacsv")
     ratings_movies_df.show()
     print("\nSeries recomendadas:")
     ratings_series_df.show()
