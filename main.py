@@ -2,7 +2,8 @@ from typing import Text
 from pyspark.sql import SparkSession
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.sql.types import StructType, StructField, IntegerType, FloatType
-from pyspark.ml.recommendation import ALS 
+from pyspark.ml.recommendation import ALS
+import numpy as np
 
 import os
 import sys
@@ -68,8 +69,12 @@ def als_recommendation():
     print("\nPeliculas recomendadas:")
     ratings_movies_df.write.format("csv").save("/tmp/spark_output/datacsv")
     ratings_movies_df.show()
+    txt_movies = ratings_movies_df.toPandas()
+    np.savetxt(r'movies.txt', txt_movies.values, encoding='UTF-8', fmt='%s')
     print("\nSeries recomendadas:")
     ratings_series_df.show()
+    txt_series = ratings_series_df.toPandas()
+    np.savetxt(r'series.txt', txt_series.values, encoding='UTF-8', fmt='%s')
 
 
 if __name__ == '__main__':
