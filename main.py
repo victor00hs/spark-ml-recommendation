@@ -58,23 +58,24 @@ def als_recommendation():
     # Unir recomendaciones para ID:666666 y dataframe peliculas
     recomendaciones_df.createOrReplaceTempView('sqlRecomendaciones')
     movie_df.createOrReplaceTempView('sqlMovies')
-    ratings_movies_df = spark.sql(''' SELECT sqlRecomendaciones.anime_id, sqlMovies.Type, sqlMovies.`English name`, sqlMovies.`Japanese name` FROM sqlMovies 
+    ratings_movies_df = spark.sql(''' SELECT sqlRecomendaciones.anime_id, sqlMovies.Type, sqlMovies.`Name`, sqlMovies.`English name`, sqlMovies.`Japanese name` FROM sqlMovies 
     JOIN sqlRecomendaciones ON sqlMovies.ID = sqlRecomendaciones.anime_id LIMIT 5''')
     
     # Unir recomendaciones para ID:666666 y dataframe series
     tv_df.createOrReplaceTempView('sqlSeries')
-    ratings_series_df = spark.sql(''' SELECT sqlRecomendaciones.anime_id, sqlSeries.Type, sqlSeries.`English name`, sqlSeries.`Japanese name` FROM sqlSeries
+    ratings_series_df = spark.sql(''' SELECT sqlRecomendaciones.anime_id, sqlSeries.Type, sqlSeries.`Name`, sqlSeries.`English name`, sqlSeries.`Japanese name` FROM sqlSeries
      JOIN sqlRecomendaciones ON sqlSeries.ID = sqlRecomendaciones.anime_id LIMIT 5''')
     
+    # Mostrar/guardar recomendaciones
     print("\nPeliculas recomendadas:")
-    ratings_movies_df.write.format("csv").save("/tmp/spark_output/datacsv")
     ratings_movies_df.show()
     txt_movies = ratings_movies_df.toPandas()
-    np.savetxt(r'movies.txt', txt_movies.values, encoding='UTF-8', fmt='%s')
+    np.savetxt(r'movies.txt', txt_movies.values, encoding='UTF-8', fmt='%s', delimiter='; ')
+
     print("\nSeries recomendadas:")
     ratings_series_df.show()
     txt_series = ratings_series_df.toPandas()
-    np.savetxt(r'series.txt', txt_series.values, encoding='UTF-8', fmt='%s')
+    np.savetxt(r'series.txt', txt_series.values, encoding='UTF-8', fmt='%s', delimiter='; ')
 
 
 if __name__ == '__main__':
